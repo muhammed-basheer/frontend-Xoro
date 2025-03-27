@@ -1,4 +1,4 @@
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef } from "react";
 import { FaStar, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -54,7 +54,7 @@ const FeaturedCourses = () => {
 
     return (
         <section className="py-12 bg-gray-100 dark:bg-gray-900 flex justify-center">
-            <div className="container mx-auto px-6 max-w-6xl">
+            <div className="container mx-auto px-6 max-w-6xl overflow-hidden">
                 {/* Section Title */}
                 <motion.h2 
                     className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center"
@@ -78,19 +78,20 @@ const FeaturedCourses = () => {
 
                     {/* Carousel Scroll Container */}
                     <motion.div 
-                        className="relative flex space-x-6 overflow-hidden w-full"
+                        className="relative flex space-x-6 overflow-x-auto scrollbar-hide w-full no-scrollbar snap-x snap-mandatory"
                         ref={carouselRef}
                         initial={{ opacity: 0, x: 100 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
+                        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                     >
                         {courses.map((course, index) => (
                             <motion.div
                                 key={course.id}
-                                className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-lg overflow-hidden min-w-[300px]"
+                                className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-lg overflow-hidden min-w-[300px] snap-center"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.3, duration: 0.6, ease: "easeOut" }}
+                                transition={{ delay: index * 0.5, duration: 0.6, ease: "easeOut" }}
                                 whileHover={{ scale: 1.05 }}
                             >
                                 <motion.img 
