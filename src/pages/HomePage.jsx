@@ -4,6 +4,8 @@ import HeroSection from "../components/HeroSection";
 import FeaturedSection from "../components/FeaturedSection";
 import CategoriesSection from "../components/CategorySection";
 import Testimonials from "../components/Testimonials";
+import CallToAction from "../components/CallToAction";
+import Footer from "../components/Footer";
 
 const HomePage = ({ darkMode, setDarkMode }) => {
   return (
@@ -14,6 +16,8 @@ const HomePage = ({ darkMode, setDarkMode }) => {
         <FeaturedSection />
         <CategoriesSection/>
         <Testimonials/>
+        <CallToAction/>
+        <Footer/>
       </main>
     </div>
   );
