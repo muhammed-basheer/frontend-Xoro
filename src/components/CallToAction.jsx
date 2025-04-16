@@ -1,39 +1,30 @@
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const CallToAction = () => {
+    const [isVisible, setIsVisible] = useState(false);
     const ref = useRef(null);
-    const isInView = useInView(ref, { 
-        once: true,  
-        margin: "-100px 0px", 
-        amount: "some"  
-    });
 
-    const containerVariants = {
-        hidden: { opacity: 0, y: 50 },
-        visible: { 
-            opacity: 1, 
-            y: 0,
-            transition: { 
-                duration: 0.8, 
-                ease: "easeOut",
-                delayChildren: 0.2,
-                staggerChildren: 0.2
-            }
-        }
-    };
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: "-100px 0px", threshold: 0.1 }
+        );
 
-    const itemVariants = {
-        hidden: { opacity: 0, x: -50 },
-        visible: { 
-            opacity: 1, 
-            x: 0,
-            transition: { 
-                duration: 0.8, 
-                ease: "easeOut"
-            }
+        if (ref.current) {
+            observer.observe(ref.current);
         }
-    };
+
+        return () => {
+            if (ref.current) {
+                observer.disconnect();
+            }
+        };
+    }, []);
 
     return (
         <section 
@@ -41,27 +32,33 @@ const CallToAction = () => {
             className="py-16 bg-blue-600 dark:bg-gray-900 text-white flex justify-center"
         >
             <div className="w-full max-w-6xl px-6 flex justify-center">
-                <motion.div 
-                    className="w-full flex flex-col md:flex-row items-center gap-10 bg-blue-600 dark:bg-blue-700 rounded-lg shadow-lg p-8"
-                    initial="hidden"
-                    animate={isInView ? "visible" : "hidden"}
-                    variants={containerVariants}
+                <div 
+                    className={`w-full flex flex-col md:flex-row items-center gap-10 bg-blue-600 dark:bg-blue-700 rounded-lg shadow-lg p-8 transform transition-all duration-800 ease-out ${
+                        isVisible 
+                            ? "opacity-100 translate-y-0" 
+                            : "opacity-0 translate-y-12"
+                    }`}
                 >
-                    {/* Content remains the same as your original component */}
-                    <motion.div 
-                        className="w-full md:w-1/2 flex justify-center"
-                        variants={itemVariants}
+                    <div 
+                        className={`w-full md:w-1/2 flex justify-center transition-all duration-800 delay-200 ease-out ${
+                            isVisible 
+                                ? "opacity-100 translate-x-0" 
+                                : "opacity-0 -translate-x-12"
+                        }`}
                     >
                         <img
-                            src="https://img.freepik.com/free-photo/young-happy-smiling-businesswoman-holding-laptop-isolated_231208-241.jpg" 
+                            src="/api/placeholder/450/450" 
                             alt="Tutor"
                             className="w-full max-w-sm rounded-lg shadow-lg"
                         />
-                    </motion.div>
+                    </div>
 
-                    <motion.div 
-                        className="w-full md:w-1/2 text-center md:text-left"
-                        variants={itemVariants}
+                    <div 
+                        className={`w-full md:w-1/2 text-center md:text-left transition-all duration-800 delay-400 ease-out ${
+                            isVisible 
+                                ? "opacity-100 translate-x-0" 
+                                : "opacity-0 -translate-x-12"
+                        }`}
                     >
                         <h2 className="text-4xl font-bold mb-4">
                             Share Your Knowledge, Inspire Others
@@ -69,15 +66,13 @@ const CallToAction = () => {
                         <p className="text-lg mb-6">
                             Join our platform and start teaching today! Empower students worldwide with your expertise.
                         </p>
-                        <motion.button
-                            className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition"
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                        <button
+                            className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-200 transform transition-transform duration-300 hover:scale-110 active:scale-90"
                         >
                             Start Teaching Today
-                        </motion.button>
-                    </motion.div>
-                </motion.div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
     );

@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+
 
 const categories = [
     { name: "Web Development", image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
@@ -14,6 +15,8 @@ const categories = [
 ];
 
 const CategoriesSection = () => {
+    const [hoveredIndex, setHoveredIndex] = useState(null);
+
     return (
         <section className="py-12 bg-gray-100 dark:bg-gray-900">
             <div className="container mx-auto px-6 max-w-6xl text-center">
@@ -22,10 +25,13 @@ const CategoriesSection = () => {
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                     {categories.map((category, index) => (
-                        <motion.div 
+                        <div 
                             key={index}
-                            whileHover={{ scale: 1.05 }}
-                            className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md cursor-pointer transition flex flex-col items-center"
+                            className={`p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md cursor-pointer flex flex-col items-center transform transition-transform duration-300 ${
+                                hoveredIndex === index ? "scale-105" : ""
+                            }`}
+                            onMouseEnter={() => setHoveredIndex(index)}
+                            onMouseLeave={() => setHoveredIndex(null)}
                         >
                             <img 
                                 src={category.image} 
@@ -35,7 +41,7 @@ const CategoriesSection = () => {
                             <p className="text-lg font-semibold text-gray-800 dark:text-white">
                                 {category.name}
                             </p>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </div>
