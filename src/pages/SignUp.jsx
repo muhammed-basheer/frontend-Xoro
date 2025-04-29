@@ -1,6 +1,6 @@
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/api.js";
 import { useState, useEffect } from "react";
 
 const SignUp = () => {
@@ -31,18 +31,17 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        setError(null);
+        setError(null); 
 
         try {
             console.log("Submitting form data:", formData);
-            const response = await axios.post("http://localhost:5000/api/auth/signup", formData);
+            const response = await api.post("http://localhost:5000/api/auth/signup", formData);
             console.log("Successful response:", response);
             
             if (response.data) {
                 // Store success indicator in session storage
                 sessionStorage.setItem("signupSuccess", "true");
-                // Navigate to home page
-                navigate('/');
+                navigate('/login');
             }
         } catch (error) {
             console.error("Error details:", error);

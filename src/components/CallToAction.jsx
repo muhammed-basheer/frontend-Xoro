@@ -47,7 +47,7 @@ const CallToAction = () => {
                         }`}
                     >
                         <img
-                            src="/api/placeholder/450/450" 
+                            src="https://img.freepik.com/free-photo/young-happy-smiling-businesswoman-holding-laptop-isolated_231208-241.jpg" 
                             alt="Tutor"
                             className="w-full max-w-sm rounded-lg shadow-lg"
                         />
