@@ -35,13 +35,14 @@ const SignUp = () => {
 
         try {
             console.log("Submitting form data:", formData);
+            console.log("Form data type:", typeof formData)
             const response = await api.post("http://localhost:5000/api/auth/signup", formData);
             console.log("Successful response:", response);
             
             if (response.data) {
                 // Store success indicator in session storage
                 sessionStorage.setItem("signupSuccess", "true");
-                navigate('/login');
+                navigate('/');
             }
         } catch (error) {
             console.error("Error details:", error);
