@@ -13,7 +13,7 @@ import {
   FaEnvelope,
   FaSignOutAlt,
 } from "react-icons/fa";
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/logo.png"; 
 
 const useDarkMode = () => {
   const [darkMode, setDarkMode] = useState(() => {
