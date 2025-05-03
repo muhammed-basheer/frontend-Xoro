@@ -1,16 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import api from "../api/api"; // adjust path if needed
+import api from "../api/api"; 
+import { useDispatch, useSelector } from "react-redux";
+import { loginStart, loginSuccess, loginFailure, resetState } from "../redux/user/userSlice.js";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
+  
   // State
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isAnimated, setIsAnimated] = useState(false);
+
+  // Reset state when component mounts
+  useEffect(() => {
+    // Reset any previous auth state when the component mounts
+    dispatch(resetState());
+  }, [dispatch]);
 
   // Handle animations on load
   useEffect(() => {
@@ -27,21 +35,20 @@ const Login = () => {
   // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+    dispatch(loginStart());
 
     try {
       const response = await api.post("http://localhost:5000/api/auth/signin", formData);
-      console.log("Response:", response.data)
       
       if (response.data) {
+        dispatch(loginSuccess(response.data));  // store user data in Redux
         sessionStorage.setItem("token", response.data.token); // or localStorage
         navigate("/");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+      console.error("Login error:", err);
+      const errorMsg = err.response?.data?.message || "Login failed. Please try again.";
+      dispatch(loginFailure(errorMsg));
     }
   };
 
@@ -117,12 +124,12 @@ const Login = () => {
             {/* Submit button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               className={`w-full py-3 rounded-lg font-semibold transition transform hover:scale-105 active:scale-95 text-white ${
-                isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
               }`}
             >
-              {isLoading ? "Logging in..." : "Log In"}
+              {loading ? "Logging in..." : "Log In"}
             </button>
 
           </form>

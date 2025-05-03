@@ -1,56 +1,17 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  FaSun,
-  FaMoon,
-  FaUser,
-  FaBars,
-  FaTimes,
-  FaSearch,
-  FaHome,
-  FaBook,
-  FaInfoCircle,
-  FaEnvelope,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import logo from "../assets/images/logo.png"; 
+import { FaSun, FaMoon, FaUser, FaBars, FaTimes, FaSearch, FaHome, FaBook, FaInfoCircle, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/user/userSlice.js"; // Import the logout action
+import logo from "../assets/images/logo.png";
 
-const useDarkMode = () => {
+const Navbar = () => {
+  const dispatch = useDispatch(); // For dispatching logout action
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem("darkMode");
     return saved ? JSON.parse(saved) : false;
   });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (darkMode) root.classList.add("dark");
-    else root.classList.remove("dark");
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
-
-  return [darkMode, setDarkMode];
-};
-
-const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
-
-  const login = useCallback((userData) => {
-    setIsAuthenticated(true);
-    setUser(userData);
-  }, []);
-
-  const logout = useCallback(() => {
-    setIsAuthenticated(false);
-    setUser(null);
-  }, []);
-
-  return { isAuthenticated, user, login, logout };
-};
-
-const Navbar = () => {
-  const [darkMode, setDarkMode] = useDarkMode();
-  const { isAuthenticated, user, logout } = useAuth();
+  const currentUser = useSelector((state) => state.user.currentUser); // Get currentUser from Redux store
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -89,6 +50,10 @@ const Navbar = () => {
   const toggleProfileMenu = useCallback(() => {
     setProfileOpen((prev) => !prev);
   }, []);
+
+  const handleLogout = () => {
+    dispatch(logout()); // Dispatch the logout action to Redux
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-white via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 shadow-lg transition-all duration-300 ease-in-out">
@@ -164,7 +129,7 @@ const Navbar = () => {
             )}
           </button>
 
-          {isAuthenticated ? (
+          {currentUser ? (
             <div className="relative">
               <button
                 onClick={toggleProfileMenu}
@@ -176,7 +141,7 @@ const Navbar = () => {
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                   <div className="px-4 py-3 border-b dark:border-gray-700">
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {user?.name || "User"}
+                      {currentUser.name || "User"}
                     </p>
                   </div>
                   <ul className="text-gray-700 dark:text-gray-300">
@@ -187,7 +152,7 @@ const Navbar = () => {
                       <FaUser className="mr-2" /> Profile
                     </li>
                     <li
-                      onClick={logout}
+                      onClick={handleLogout}
                       className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center text-red-500"
                     >
                       <FaSignOutAlt className="mr-2" /> Logout

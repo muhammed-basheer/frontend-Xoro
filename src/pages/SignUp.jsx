@@ -2,17 +2,25 @@ import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api.js";
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginStart, loginSuccess, loginFailure, resetState } from "../redux/user/userSlice.js";
 
 const SignUp = () => {
+    const dispatch = useDispatch();
+    const { loading, error } = useSelector((state) => state.user);
     const navigate = useNavigate();
-    const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [isAnimated, setIsAnimated] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: ""
     });
+
+    // Reset state when component mounts
+    useEffect(() => {
+        // Reset any previous auth state when the component mounts
+        dispatch(resetState());
+    }, [dispatch]);
 
     // Trigger animations after component mount
     useEffect(() => {
@@ -30,26 +38,20 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        setError(null); 
-
+        dispatch(loginStart()); // Use the same loginStart action
+        
         try {
-            console.log("Submitting form data:", formData);
-            console.log("Form data type:", typeof formData)
             const response = await api.post("http://localhost:5000/api/auth/signup", formData);
-            console.log("Successful response:", response);
             
             if (response.data) {
-                // Store success indicator in session storage
+                dispatch(loginSuccess(response.data)); // Use the same loginSuccess action
                 sessionStorage.setItem("signupSuccess", "true");
                 navigate('/');
             }
         } catch (error) {
-            console.error("Error details:", error);
-            console.error("Response data:", error.response?.data);
-            setError(error.response?.data?.message || "An error occurred during signup");
-        } finally {
-            setIsLoading(false);
+            console.error("SignUp error:", error);
+            const errorMsg = error.response?.data?.message || "Registration failed. Please try again.";
+            dispatch(loginFailure(errorMsg)); // Use the same loginFailure action
         }
     };
 
@@ -130,12 +132,12 @@ const SignUp = () => {
 
                         <button 
                             type="submit"
-                            disabled={isLoading}
+                            disabled={loading}
                             className={`w-full text-white py-3 rounded-lg font-semibold transition-all transform hover:scale-[1.03] active:scale-[0.97] ${
-                                isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                                loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                             }`}
                         >
-                            {isLoading ? "Processing..." : "Sign Up"}
+                            {loading ? "Processing..." : "Sign Up"}
                         </button>
                     </form>
 
