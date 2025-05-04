@@ -140,53 +140,67 @@ const Navbar = () => {
           </button>
 
           {currentUser ? (
-            <div className="relative">
-              <button
-                onClick={toggleProfileMenu}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all hover:scale-110"
-              >
-                <FaUser className="text-gray-700 dark:text-gray-300" />
-              </button>
-              {profileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                  <div className="px-4 py-3 border-b dark:border-gray-700">
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {currentUser.name || "User"}
-                    </p>
-                  </div>
-                  <ul className="text-gray-700 dark:text-gray-300">
-                    <li
-                      onClick={() => navigate("/profile")}
-                      className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center"
-                    >
-                      <FaUser className="mr-2" /> Profile
-                    </li>
-                    <li
-                      onClick={handleLogout}
-                      className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center text-red-500"
-                    >
-                      <FaSignOutAlt className="mr-2" /> Logout
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex space-x-4">
-              <Link
-                to="/login"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-white"
-              >
-                Signup
-              </Link>
-            </div>
-          )}
+  <div className="relative">
+    <button
+      onClick={toggleProfileMenu}
+      className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-blue-500 hover:ring-blue-400 transition-all"
+      title="Open profile menu"
+    >
+      {/* If you have an avatar URL: <img src={currentUser.avatarUrl} /> */}
+      <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white font-bold uppercase">
+        {currentUser.name?.charAt(0) || "U"}
+      </div>
+    </button>
+
+    {profileOpen && (
+      <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-xl ring-1 ring-black/5 dark:ring-white/10 animate-fade-in">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+          <p className="text-sm font-semibold text-gray-800 dark:text-white">
+            {currentUser.name || "User"}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {currentUser.email || "user@example.com"}
+          </p>
+        </div>
+
+        <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+          <li
+            onClick={() => {
+              navigate("/profile");
+              setProfileOpen(false);
+            }}
+            className="flex items-center gap-2 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+          >
+            <FaUser className="text-blue-500" /> Profile
+          </li>
+
+          <li
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-5 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900 cursor-pointer transition-colors"
+          >
+            <FaSignOutAlt /> Logout
+          </li>
+        </ul>
+      </div>
+    )}
+  </div>
+) : (
+  <div className="flex space-x-4">
+    <Link
+      to="/login"
+      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
+    >
+      Login
+    </Link>
+    <Link
+      to="/signup"
+      className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-white"
+    >
+      Signup
+    </Link>
+  </div>
+)}
+
 
           <button
             onClick={toggleMobileMenu}
