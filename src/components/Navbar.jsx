@@ -4,6 +4,7 @@ import { FaSun, FaMoon, FaUser, FaBars, FaTimes, FaSearch, FaHome, FaBook, FaInf
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/user/userSlice.js"; // Import the logout action
 import logo from "../assets/images/logo.png";
+import api from "../api/api.js"
 
 const Navbar = () => {
   const dispatch = useDispatch(); // For dispatching logout action
@@ -51,9 +52,18 @@ const Navbar = () => {
     setProfileOpen((prev) => !prev);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logout()); // Dispatch the logout action to Redux
-  };
+  const handleLogout = async () => {
+    try {
+      const res =   await api.post('http://localhost:5000/api/auth/logout'); 
+      console.log("cleared",res.data); // Log the response from the server
+    } catch (err) {
+        console.error('Logout error', err);
+    }
+
+    dispatch(logout()); // clear Redux state
+    navigate('/login'); // redirect to login
+};
+
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-white via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 shadow-lg transition-all duration-300 ease-in-out">
