@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const testimonials = [
   {
@@ -7,7 +7,7 @@ const testimonials = [
     role: "Student",
     review: "This platform is amazing! The courses are well-structured and easy to follow.",
     rating: 5,
-    image: "https://randomuser.me/api/portraits/women/1.jpg",
+    image: "https://randomuser.me/api/portraits/women/1.jpg"
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ const testimonials = [
     role: "Instructor",
     review: "Great experience! The tutors are knowledgeable and very helpful.",
     rating: 4.5,
-    image: "https://randomuser.me/api/portraits/men/2.jpg",
+    image: "https://randomuser.me/api/portraits/men/2.jpg"
   },
   {
     id: 3,
@@ -23,7 +23,7 @@ const testimonials = [
     role: "Student",
     review: "I improved my coding skills drastically thanks to this platform.",
     rating: 5,
-    image: "https://randomuser.me/api/portraits/women/3.jpg",
+    image: "https://randomuser.me/api/portraits/women/3.jpg"
   },
   {
     id: 4,
@@ -31,7 +31,7 @@ const testimonials = [
     role: "Instructor",
     review: "User-friendly and informative. Highly recommend it!",
     rating: 4.8,
-    image: "https://randomuser.me/api/portraits/men/4.jpg",
+    image: "https://randomuser.me/api/portraits/men/4.jpg"
   },
   {
     id: 5,
@@ -39,15 +39,41 @@ const testimonials = [
     role: "Student",
     review: "Loved the hands-on projects! They helped me understand concepts better.",
     rating: 5,
-    image: "https://randomuser.me/api/portraits/women/5.jpg",
+    image: "https://randomuser.me/api/portraits/women/5.jpg"
   },
 ];
 
 const Testimonials = () => {
+  // Create enough duplicates to ensure smooth infinite scrolling
   const [duplicateTestimonials, setDuplicateTestimonials] = useState([
     ...testimonials,
     ...testimonials,
+    ...testimonials,  // Adding one more set for smoother looping
   ]);
+  
+  const scrollerRef = useRef(null);
+
+  useEffect(() => {
+    // Function to reset animation position when it completes
+    const handleAnimationIteration = () => {
+      if (scrollerRef.current) {
+        // This helps prevent the visual "jump" at the end of the animation
+        const firstSetWidth = testimonials.length * (300 + 24); // card width + gap
+        scrollerRef.current.style.transform = 'translateX(0)';
+      }
+    };
+
+    const scrollerElement = scrollerRef.current;
+    if (scrollerElement) {
+      scrollerElement.addEventListener('animationiteration', handleAnimationIteration);
+    }
+
+    return () => {
+      if (scrollerElement) {
+        scrollerElement.removeEventListener('animationiteration', handleAnimationIteration);
+      }
+    };
+  }, []);
 
   return (
     <section className="py-12 bg-gray-100 dark:bg-gray-900 flex justify-center overflow-hidden">
@@ -57,16 +83,24 @@ const Testimonials = () => {
         </h2>
 
         <div className="relative w-full overflow-hidden">
+          {/* Left gradient fade for smoother appearance */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-100 to-transparent dark:from-gray-900 z-10"></div>
+          
+          {/* Right gradient fade for smoother appearance */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-100 to-transparent dark:from-gray-900 z-10"></div>
+          
           <div
+            ref={scrollerRef}
             className="flex space-x-6 animate-scroll-x"
             style={{
-              animation: "scroll 30s linear infinite",
+              willChange: "transform", // Performance optimization
+              minWidth: "fit-content"
             }}
           >
             {duplicateTestimonials.map((testimonial, index) => (
               <div
-                key={index}
-                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg min-w-[300px] max-w-xs flex flex-col items-center text-center hover:scale-105 transition-transform duration-300"
+                key={`${testimonial.id}-${index}`}
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg min-w-[300px] max-w-xs flex-shrink-0 flex flex-col items-center text-center hover:scale-105 transition-transform duration-300"
               >
                 <img
                   src={testimonial.image}

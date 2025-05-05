@@ -53,4 +53,34 @@
   .animate-fade-in {
     animation: fade-in 0.4s ease-out forwards;
   }
-  
+/* Tailwind Custom Animations for Sliding */
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.5s ease-out forwards;
+}
+
+/* Staggered Item Animation */
+@keyframes fade-in-staggered {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-item-delay {
+  animation: fade-in-staggered 2s ease-out forwards;
+}
+
+
