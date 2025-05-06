@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
-import HomePage from "./pages/HomePage";
-import SignUp from './pages/SignUp';
-import LogIn from './pages/LogIn';
+import HomePage from "./pages/students/HomePage";
+import SignUp from './pages/students/SignUp';
+import LogIn from './pages/students/LogIn';
 
 function App() {
   const [darkMode, setDarkMode] = useState(

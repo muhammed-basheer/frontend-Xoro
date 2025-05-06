@@ -1,9 +1,9 @@
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../api/api.js";
+import api from "../../api/api.js";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginStart, loginSuccess, loginFailure, resetState } from "../redux/user/userSlice.js";
+import { loginStart, loginSuccess, loginFailure, resetState } from "../../redux/user/userSlice.js";
 const SignUp = () => {
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.user);

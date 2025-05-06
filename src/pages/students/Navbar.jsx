@@ -14,9 +14,9 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/user/userSlice.js"; // Import the logout action
-import logo from "../assets/images/logo.png";
-import api from "../api/api.js";
+import { logout } from "../../redux/user/userSlice.js"; // Import the logout action
+import logo from "../../assets/images/logo.png"
+import api from "../../api/api.js";
 
 const Navbar = () => {
   const dispatch = useDispatch(); // For dispatching logout action
@@ -80,15 +80,15 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-white via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 shadow-lg transition-all duration-300 ease-in-out">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center space-x-4 transition-transform duration-700 ease-in-out transform hover:scale-105">
-          <Link to="/">
-            <img
-              src={logo}
-              alt="Platform Logo"
-              className="h-10 w-auto filter dark:invert dark:brightness-0 dark:contrast-200"
-            />
-          </Link>
-        </div>
+      <div className="flex items-center space-x-4">
+  <Link to="/">
+    <img
+      src={logo}
+      alt="Platform Logo"
+      className="h-8 w-auto sm:h-9 md:h-10 lg:h-12 xl:h-14 filter dark:invert transition-transform duration-700 ease-in-out hover:scale-105"
+    />
+  </Link>
+</div>
 
         <div className="hidden md:flex items-center space-x-8">
           <form onSubmit={handleSearch} className="relative">
@@ -213,25 +213,32 @@ const Navbar = () => {
             </div>
           )}
 
-<button
-  onClick={toggleMobileMenu}
-  aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-  className="md:hidden p-2 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 relative w-10 h-10 overflow-hidden"
->
-  {/* Hamburger icon */}
-  <FaBars
-    className={`absolute inset-0 m-auto transition-all duration-300 ease-in-out
-      ${menuOpen ? 'opacity-0 scale-0 rotate-90' : 'opacity-100 scale-100 rotate-0'}
+          <button
+            onClick={toggleMobileMenu}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="md:hidden p-2 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 relative w-10 h-10 overflow-hidden"
+          >
+            {/* Hamburger icon */}
+            <FaBars
+              className={`absolute inset-0 m-auto transition-all duration-300 ease-in-out
+      ${
+        menuOpen
+          ? "opacity-0 scale-0 rotate-90"
+          : "opacity-100 scale-100 rotate-0"
+      }
       text-gray-700 dark:text-gray-300`}
-  />
-  {/* Close (X) icon */}
-  <FaTimes
-    className={`absolute inset-0 m-auto transition-all duration-300 ease-in-out
-      ${menuOpen ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 rotate-90'}
+            />
+            {/* Close (X) icon */}
+            <FaTimes
+              className={`absolute inset-0 m-auto transition-all duration-300 ease-in-out
+      ${
+        menuOpen
+          ? "opacity-100 scale-100 rotate-0"
+          : "opacity-0 scale-0 rotate-90"
+      }
       text-gray-700 dark:text-gray-300`}
-  />
-</button>
-
+            />
+          </button>
         </div>
       </div>
 

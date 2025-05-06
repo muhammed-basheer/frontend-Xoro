@@ -1,11 +1,11 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import HeroSection from "../components/HeroSection";
-import FeaturedSection from "../components/FeaturedSection";
-import CategoriesSection from "../components/CategorySection";
-import Testimonials from "../components/Testimonials";
-import CallToAction from "../components/CallToAction";
-import Footer from "../components/Footer";
+import Navbar from "../students/Navbar";
+import HeroSection from "../students/HeroSection";
+import FeaturedSection from "../students/FeaturedSection";
+import CategoriesSection from "../students/CategorySection";
+import Testimonials from "../students/Testimonials";
+import CallToAction from "../students/CallToAction";
+import Footer from "../students/Footer";
 
 const HomePage = ({ darkMode, setDarkMode }) => {
   return (

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import api from "../api/api"; 
+import api from "../../api/api.js"; 
 import { useDispatch, useSelector } from "react-redux";
-import { loginStart, loginSuccess, loginFailure, resetState } from "../redux/user/userSlice.js";
+import { loginStart, loginSuccess, loginFailure, resetState } from "../../redux/user/userSlice.js";
 
 const Login = () => {
   const navigate = useNavigate();
