@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
-import HomePage from "./pages/students/HomePage";
-import SignUp from './pages/students/SignUp';
-import LogIn from './pages/students/LogIn';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import StudentRoutes from "./routes/studentRoutes";
 
 function App() {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
   );
-  
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -19,24 +17,15 @@ function App() {
     }
   }, [darkMode]);
 
-  
-
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${  darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"}`}>
-
-    <Router>
-    <Routes>
-   
-
-      <Route path='/' element = {<HomePage darkMode={darkMode} setDarkMode={setDarkMode}/>}/>
-      <Route path='/signup' element={<SignUp/>} />
-      <Route path='/login' element= {<LogIn/>} />
-      
-    </Routes>
-    </Router>
-      
-
-
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"
+      }`}
+    >
+      <Router>
+        <StudentRoutes darkMode={darkMode} setDarkMode={setDarkMode} />
+      </Router>
     </div>
   );
 }
