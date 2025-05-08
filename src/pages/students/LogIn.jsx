@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import api from "../../api/api.js"; 
+import axios from "axios"; // Import axios directly
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginSuccess, loginFailure, resetState } from "../../redux/user/userSlice.js";
 
@@ -9,7 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.user);
-  
+
   // State
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isAnimated, setIsAnimated] = useState(false);
@@ -38,7 +38,12 @@ const Login = () => {
     dispatch(loginStart());
 
     try {
-      const response = await api.post("http://localhost:5000/api/auth/signin", formData);
+      // Use direct axios call for login to avoid the interceptor
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/signin", 
+        formData,
+        { withCredentials: true }
+      );
       
       if (response.data) {
         dispatch(loginSuccess(response.data));  // store user data in Redux
@@ -47,18 +52,26 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      const errorMsg = err.response?.data?.message || "Login failed. Please try again.";
-      dispatch(loginFailure(errorMsg));
+      // Handle specific error responses
+      if (err.response?.status === 401) {
+        const errorMsg = err.response?.data?.message || "Invalid email or password. Please try again.";
+        dispatch(loginFailure(errorMsg));
+      } else if (err.response?.status === 400) {
+        const errorMsg = err.response?.data?.message || "Please provide all required fields.";
+        dispatch(loginFailure(errorMsg));
+      } else {
+        const errorMsg = err.response?.data?.message || "Login failed. Please try again.";
+        dispatch(loginFailure(errorMsg));
+      }
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-6">
       <div className="max-w-4xl w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg flex overflow-hidden">
-
         {/* Left side - Image */}
         <div className={`hidden md:flex w-1/2 items-center justify-center bg-blue-600 dark:bg-blue-700 transition-all duration-500 ease-out ${isAnimated ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
-        <img
+          <img
             src="https://img.freepik.com/free-photo/young-smiling-man-working-laptop-office_231208-4122.jpg"
             alt="Login"
             className="w-full h-full object-cover"
@@ -67,7 +80,6 @@ const Login = () => {
 
         {/* Right side - Form */}
         <div className={`w-full md:w-1/2 p-10 flex flex-col justify-center transition-all duration-500 ease-out ${isAnimated ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
-
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-6">
             Welcome Back
           </h2>
@@ -81,7 +93,6 @@ const Login = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-
             {/* Email input */}
             <div className="relative">
               <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
@@ -131,7 +142,6 @@ const Login = () => {
             >
               {loading ? "Logging in..." : "Log In"}
             </button>
-
           </form>
 
           {/* Bottom text */}
@@ -141,7 +151,6 @@ const Login = () => {
               Sign Up
             </Link>
           </p>
-
         </div>
       </div>
     </div>

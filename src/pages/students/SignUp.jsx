@@ -1,9 +1,10 @@
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../../api/api.js";
 import { useState, useEffect } from "react";
+import axios from "axios"; // Import axios directly instead of using the api instance
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginSuccess, loginFailure, resetState } from "../../redux/user/userSlice.js";
+
 const SignUp = () => {
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.user);
@@ -40,7 +41,12 @@ const SignUp = () => {
         dispatch(loginStart()); // Use the same loginStart action
         
         try {
-            const response = await api.post("http://localhost:5000/api/auth/signup", formData);
+            // Use direct axios call for signup to avoid the interceptor
+            const response = await axios.post(
+                "http://localhost:5000/api/auth/signup", 
+                formData,
+                { withCredentials: true }
+            );
             
             if (response.data) {
                 dispatch(loginSuccess(response.data)); // Use the same loginSuccess action
@@ -49,8 +55,17 @@ const SignUp = () => {
             }
         } catch (error) {
             console.error("SignUp error:", error);
-            const errorMsg = error.response?.data?.message || "Registration failed. Please try again.";
-            dispatch(loginFailure(errorMsg)); // Use the same loginFailure action
+            
+            // Handle specific error responses
+            if (error.response?.status === 400 && error.response?.data?.message === "User already exists") {
+                dispatch(loginFailure("An account with this email already exists. Please try logging in instead."));
+            } else if (error.response?.status === 400) {
+                const errorMsg = error.response?.data?.message || "Please fill in all required fields correctly.";
+                dispatch(loginFailure(errorMsg));
+            } else {
+                const errorMsg = error.response?.data?.message || "Registration failed. Please try again.";
+                dispatch(loginFailure(errorMsg));
+            }
         }
     };
 
@@ -126,6 +141,7 @@ const SignUp = () => {
                                 placeholder="Password" 
                                 className="w-full pl-10 p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                 required
+                                minLength="6"
                             />
                         </div>
 

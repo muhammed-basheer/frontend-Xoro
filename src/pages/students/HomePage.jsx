@@ -8,7 +8,6 @@ import CallToAction from "../students/CallToAction";
 const HomePage = () => {
   return (
     <div>
-
         <HeroSection />
         <FeaturedSection />
         <CategoriesSection/>
