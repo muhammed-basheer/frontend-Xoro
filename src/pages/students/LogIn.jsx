@@ -1,24 +1,33 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom"; // Added useLocation
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import axios from "axios"; // Import axios directly
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { loginStart, loginSuccess, loginFailure, resetState } from "../../redux/user/userSlice.js";
+import { loginStart, loginSuccess, loginFailure } from "../../redux/user/userSlice.js";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation(); // Get location for accessing state from redirects
   const { loading, error } = useSelector((state) => state.user);
 
   // State
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isAnimated, setIsAnimated] = useState(false);
+  const [localError, setLocalError] = useState(""); // For errors passed via location state
 
-  // Reset state when component mounts
+  // Reset state when component mounts and check for any error messages in location state
   useEffect(() => {
-    // Reset any previous auth state when the component mounts
-    dispatch(resetState());
-  }, [dispatch]);
+    // Reset any previous auth state
+    dispatch(loginFailure(null));
+    
+    // Check for error messages passed via redirect
+    if (location.state?.error) {
+      setLocalError(location.state.error);
+    } else if (location.state?.message) {
+      setLocalError(location.state.message);
+    }
+  }, [dispatch, location]);
 
   // Handle animations on load
   useEffect(() => {
@@ -36,6 +45,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
+    // Clear local error state
+    setLocalError("");
 
     try {
       // Use direct axios call for login to avoid the interceptor
@@ -46,9 +57,20 @@ const Login = () => {
       );
       
       if (response.data) {
+        // Check if the user has the required role (student)
+        if (response.data.user && response.data.user.role !== "student") {
+          dispatch(loginFailure("Access denied: Only students can access this platform"));
+          return;
+        }
+        
+        // If role is correct, proceed with login
         dispatch(loginSuccess(response.data));  // store user data in Redux
         sessionStorage.setItem("token", response.data.token); // or localStorage
-        navigate("/");
+        
+        // If there was a redirect from a protected page, redirect back there
+        // Otherwise go to homepage
+        const redirectPath = location.state?.from?.pathname || "/";
+        navigate(redirectPath); 
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -84,10 +106,10 @@ const Login = () => {
             Welcome Back
           </h2>
 
-          {/* Error message */}
-          {error && (
+          {/* Combined error message (from Redux or redirect) */}
+          {(error || localError) && (
             <div className="p-3 mb-4 text-red-500 bg-red-100 border border-red-400 rounded text-center animate-fade-in">
-              {error}
+              {error || localError}
             </div>
           )}
 

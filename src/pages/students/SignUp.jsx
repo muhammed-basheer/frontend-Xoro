@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios"; // Import axios directly instead of using the api instance
 import { useDispatch, useSelector } from "react-redux";
-import { loginStart, loginSuccess, loginFailure, resetState } from "../../redux/user/userSlice.js";
+import { loginStart, loginSuccess, loginFailure } from "../../redux/user/userSlice.js";
 
 const SignUp = () => {
     const dispatch = useDispatch();
@@ -19,7 +19,7 @@ const SignUp = () => {
     // Reset state when component mounts
     useEffect(() => {
         // Reset any previous auth state when the component mounts
-        dispatch(resetState());
+        dispatch(loginFailure(null));
     }, [dispatch]);
 
     // Trigger animations after component mount
@@ -51,7 +51,7 @@ const SignUp = () => {
             if (response.data) {
                 dispatch(loginSuccess(response.data)); // Use the same loginSuccess action
                 sessionStorage.setItem("signupSuccess", "true");
-                navigate('/');
+                navigate('/'); // Redirect to the homepage after successful signup
             }
         } catch (error) {
             console.error("SignUp error:", error);

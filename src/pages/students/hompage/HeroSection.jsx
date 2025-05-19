@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaPlay, FaRocket, FaLaptopCode } from "react-icons/fa";
-import bannerImage from "../../assets/images/bannerImage.jpg"; // Adjust the path as necessary
+import bannerImage from "../../../assets/images/bannerImage.jpg"; // Adjust the path as necessary
 import CountUp from "react-countup";
 
 const HeroSection = () => {

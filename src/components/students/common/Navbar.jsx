@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react"; // Already likely imported
 import {
   FaSun,
   FaMoon,
@@ -14,9 +15,9 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../redux/user/userSlice.js"; // Import the logout action
-import logo from "../../assets/images/logo.png"
-import api from "../../api/api.js";
+import { logout } from "../../../redux/user/userSlice.js"; // Import the logout action
+import logo from "../../../assets/images/logo.png"
+import api from "../../../api/api.js";
 
 const Navbar = () => {
   const dispatch = useDispatch(); // For dispatching logout action
@@ -52,6 +53,14 @@ const Navbar = () => {
     },
     [searchQuery, navigate]
   );
+
+  useEffect(() => {
+    if (currentUser && currentUser.user.role !== "student") {
+      navigate("/login"); // Redirect if not a student
+    }
+  }, [currentUser, navigate]);
+
+
 
   const toggleDarkMode = useCallback(() => {
     setDarkMode((prev) => !prev);
