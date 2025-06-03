@@ -9,6 +9,7 @@ import AdminRoutes from "./routes/AdminRoutes";
 // Public pages
 import HomePage from "./pages/students/HomePage";
 import SignUp from "./pages/students/SignUp";
+import Profile from "./pages/students/Profile";
 
 function App() {
   const [darkMode] = useState(
@@ -43,6 +44,8 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignUp />} />
+                <Route path="/profile" element={<Profile />} />
+      
           
           {/* Role-specific routes */}
           {studentRoutes}

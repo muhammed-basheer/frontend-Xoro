@@ -10,18 +10,24 @@ import Footer from "../components/students/common/Footer";
 /**
  * StudentLayout - Professional layout for student pages
  * 
- * This component integrates your existing Navbar, Sidebar and Footer components
- * into a cohesive, responsive layout with proper spacing and positioning.
+ * FIXED:
+ * - Improved component mounting and state management
+ * - Added debug console logs for route rendering
+ * - Enhanced responsive behavior
+ * - Fixed potential layout issues with Outlet rendering
  */
 const StudentLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user || { currentUser: null });
   const navigate = useNavigate();
   
   // Check if student has any course enrollments
   const [hasEnrollments, setHasEnrollments] = useState(true);
   
   useEffect(() => {
+    // Log to verify component is mounting properly
+    console.log("StudentLayout mounted");
+    
     // You would fetch this data from your API
     // Example:
     // const fetchEnrollments = async () => {
@@ -34,9 +40,14 @@ const StudentLayout = () => {
     //   }
     // };
     // fetchEnrollments();
+    
+    // Cleanup function
+    return () => {
+      console.log("StudentLayout unmounted");
+    };
   }, [currentUser]);
   
-  // If you need to sync up sidebar state with Navbar's menuOpen state, add this
+  // Handle sidebar toggle from navbar
   const handleNavbarMenuToggle = (isOpen) => {
     setSidebarOpen(isOpen);
   };
@@ -55,21 +66,31 @@ const StudentLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Your Navbar component from paste-3.txt */}
-      <Navbar />
+      {/* Navbar - fixed at top */}
+      <Navbar onMenuToggle={handleNavbarMenuToggle} />
       
       <div className="flex flex-1 pt-16"> {/* pt-16 to account for fixed navbar */}
-        {/* Your Sidebar component from paste-4.txt */}
+        {/* Sidebar with proper z-index */}
         <Sidebar 
           isOpen={sidebarOpen} 
           setIsOpen={setSidebarOpen} 
           hasEnrollments={hasEnrollments} 
+          className="z-30"
         />
         
-        {/* Main content area - Modified for better responsive behavior */}
-        <main className="flex-1 w-full transition-all duration-300">
-          {/* Responsive container with proper padding and no gap */}
+        {/* Main content area with Outlet for child routes */}
+        <main className="flex-1 w-full transition-all duration-300 relative">
+          {/* Overlay for mobile when sidebar is open */}
+          {sidebarOpen && (
+            <div 
+              className="absolute inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+          
+          {/* Container for child routes via Outlet */}
           <div className="px-4 sm:px-6 lg:px-8 py-6 w-full max-w-full">
+            {/* This is where nested routes will render */}
             <Outlet />
           </div>
         </main>
@@ -86,7 +107,7 @@ const StudentLayout = () => {
         </svg>
       </button>
       
-      {/* Your Footer component */}
+      {/* Footer */}
       <Footer />
     </div>
   );

@@ -10,7 +10,7 @@ import Footer from "../../components/students/common/Footer";
 import StudentProgressCard from "./hompage/StudentProgressCard";
 
 const HomePage = () => {
-  const currentUser = useSelector((state) => state.user.currentUser);
+  const currentUser = useSelector((state) => state.user.currentUser);   
 
   return (
     <div>

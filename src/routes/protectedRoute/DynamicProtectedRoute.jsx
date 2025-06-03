@@ -66,7 +66,6 @@ const DynamicProtectedRoute = ({ allowedRoles, loginRoutes = {} }) => {
     />;
   }
   
-  // If user is logged in and role matches, render the protected content
   return <Outlet />;
 };
 

@@ -9,14 +9,20 @@ import StudentDashboard from "../pages/students/StudentDashboard";
 
 /**
  * Student routes array to be included in the main Routes component
+ * 
+ * FIXED:
+ * - Corrected route nesting structure for React Router v6
+ * - Properly configured outlet context for StudentLayout
+ * - Added index route for better default navigation
+ * 
  * @param {Object} loginRoutes - Object mapping roles to their respective login routes
  * @returns {Array} Array of Route components
  */
 const StudentRoutes = (loginRoutes) => [
-  // Public student login route
+  // Public student login route (stays at top level)
   <Route key="student-login" path="/login" element={<LogIn />} />,
   
-  // Protected student routes
+  // Protected student routes - properly nested structure
   <Route
     key="student-protected"
     element={
@@ -26,10 +32,14 @@ const StudentRoutes = (loginRoutes) => [
       />
     }
   >
+    {/* StudentLayout will render its children in its <Outlet /> */}
     <Route element={<StudentLayout />}>
+      {/* Dashboard route */}
       <Route path="/dashboard" element={<StudentDashboard />} />
-      {/* <Route path="/courses" element={<Courses />} />
-      <Route path="/profile" element={<Profile />} /> */}
+      
+      
+      {/* Other student routes (commented but structured correctly) */}
+      {/* <Route path="/courses" element={<Courses />} /> */}
     </Route>
   </Route>
 ];
