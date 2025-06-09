@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 const initialState = {
   currentUser: null,
@@ -40,45 +41,76 @@ const userSlice = createSlice({
   }
 });
 
-export const { 
-  loginStart, 
-  loginSuccess, 
-  loginFailure, 
-  logout, 
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
   updateUser,
-  resetState 
+  resetState
 } = userSlice.actions;
 
-// Thunk for checking authentication status
+// FIXED: Check authentication status - The main fix!
 export const checkAuthStatus = () => async (dispatch) => {
   try {
-    const response = await fetch('/api/auth/check-auth', {
-      credentials: 'include', // Important for cookies
-    });
+    dispatch(loginStart());
     
-    if (response.ok) {
-      const data = await response.json();
-      dispatch(loginSuccess(data.user));
+    const response = await axios.get(
+      'http://localhost:5000/api/auth/check',
+      { 
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    
+    if (response.data.authenticated && response.data.user) {
+      // Backend returns: { authenticated: true, user: { _id, name, email, role, ... } }
+      // Frontend expects: currentUser.user.role
+      // So we wrap it: { user: { _id, name, email, role, ... } }
+      
+      const userData = { user: response.data.user };
+      
+      console.log('User data from auth check:///', response.data.user);
+      
+      console.log('User data from auth check:', userData);
+
+      
+      dispatch(loginSuccess(userData));
+      return userData;
     } else {
       dispatch(logout());
+      return null;
     }
   } catch (error) {
-    console.error('Error checking auth status:', error);    
+    console.error('Error checking auth status:', error);
+    
+    // Handle token expiration
+    if (error.response?.data?.tokenExpired) {
+      console.log('Token expired, attempting refresh...');
+      try {
+        const refreshResponse = await axios.post(
+          'http://localhost:5000/api/auth/refresh',
+          {},
+          { withCredentials: true }
+        );
+        
+        if (refreshResponse.data.success) {
+          // Retry auth check after refresh
+          return dispatch(checkAuthStatus());
+        }
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
+      }
+    }
+    
     dispatch(logout());
+    return null;
   }
 };
 
-// Thunk for logging out
-export const logoutUser = () => async (dispatch) => {
-  try {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
-    dispatch(logout());
-  } catch (error) {
-    console.error('Logout error:', error);
-  }
-};
+
 
 export default userSlice.reducer;

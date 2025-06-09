@@ -28,6 +28,7 @@ const StudentLayout = () => {
     // Log to verify component is mounting properly
     console.log("StudentLayout mounted");
     
+    
     // You would fetch this data from your API
     // Example:
     // const fetchEnrollments = async () => {

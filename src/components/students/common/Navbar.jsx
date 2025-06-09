@@ -26,7 +26,7 @@ const Navbar = () => {
     return saved ? JSON.parse(saved) : false;
   });
   const currentUser = useSelector((state) => state.user.currentUser); // Get currentUser from Redux store
-  console.log("Current User:", currentUser); // Log the current user
+  // console.log("Current User:", currentUser); // Log the current user
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -55,7 +55,7 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    if (currentUser && currentUser.user.role !== "student") {
+    if (currentUser && currentUser?.user?.role !== "student") {
       navigate("/login"); // Redirect if not a student
     }
   }, [currentUser, navigate]);
@@ -169,7 +169,7 @@ const Navbar = () => {
               >
                 {/* If you have an avatar URL: <img src={currentUser.avatarUrl} /> */}
                 <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white font-bold uppercase">
-                  {currentUser.user.name?.charAt(0) || "U"}
+                  {currentUser?.user?.name?.charAt(0) || "U"}
                 </div>
               </button>
 

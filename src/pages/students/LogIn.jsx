@@ -1,33 +1,25 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Added useLocation
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginSuccess, loginFailure } from "../../redux/user/userSlice.js";
+import GoogleOAuthButton from '../../components/students/GoogleOAuthButton';
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation(); // Get location for accessing state from redirects
+  const location = useLocation();
   const { loading, error } = useSelector((state) => state.user);
 
   // State
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isAnimated, setIsAnimated] = useState(false);
-  const [localError, setLocalError] = useState(""); // For errors passed via location state
+  const [localError, setLocalError] = useState("");
 
-  // Reset state when component mounts and check for any error messages in location state
-  useEffect(() => {
-    // Reset any previous auth state
-    dispatch(loginFailure(null));
-    
-    // Check for error messages passed via redirect
-    if (location.state?.error) {
-      setLocalError(location.state.error);
-    } else if (location.state?.message) {
-      setLocalError(location.state.message);
-    }
-  }, [dispatch, location]);
+  // Update your Login.jsx component's useEffect for OAuth handling
+
+
 
   // Handle animations on load
   useEffect(() => {
@@ -57,11 +49,14 @@ const Login = () => {
       );
       
       if (response.data) {
+        console.log("response.data.user.email", response.data.user.email);
+        
         // Check if the user has the required role (student)
         if (response.data.user && response.data.user.role !== "student") {
           dispatch(loginFailure("Access denied: Only students can access this platform"));
           return;
         }
+        console.log("Login successful:", response.data);
         
         // If role is correct, proceed with login
         dispatch(loginSuccess(response.data));  // store user data in Redux
@@ -113,6 +108,27 @@ const Login = () => {
             </div>
           )}
 
+          {/* Google OAuth Button */}
+          <div className="mb-6">
+            <GoogleOAuthButton 
+              text="Continue with Google"
+              variant="outline"
+              onError={(error) => setLocalError('Google authentication failed')}
+            />
+            
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                  Or continue with email
+                </span>
+              </div>
+            </div>
+          </div>
+          
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email input */}

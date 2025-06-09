@@ -12,7 +12,10 @@ import { useSelector } from "react-redux";
  */
 const DynamicProtectedRoute = ({ allowedRoles, loginRoutes = {} }) => {
   const { currentUser } = useSelector((state) => state.user);
+  console.log("🚀 DynamicProtectedRoute mounted, currentUser:", currentUser);
+  
   const location = useLocation();
+  
   
   // Default login route if no specific route is defined for a role
   const DEFAULT_LOGIN_ROUTE = "/login";
@@ -36,6 +39,7 @@ const DynamicProtectedRoute = ({ allowedRoles, loginRoutes = {} }) => {
     } else if (attemptedPath.includes("/student")) {
       redirectPath = loginRoutes.student || "/student/login";
       targetRole = "student";
+      
     }
     
     return <Navigate 
